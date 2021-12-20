@@ -1,5 +1,7 @@
 package src;
 
+import java.util.Scanner;
+
 public class Competidor implements Comparable<Competidor>{
     private String nome;
     private String apelido;

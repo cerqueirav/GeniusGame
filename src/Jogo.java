@@ -7,7 +7,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Jogo{
 	private Botao but1,but2,but3,but4;
@@ -16,12 +18,14 @@ public class Jogo{
 	private int indice1, indice2;
 	private int contagem; //quantidade de botoes apertados em uma rodada
     private int velocidade = 1;
+	private int qtdCompetidores;
+	private String modoJogo;
 	private JButton butiniciar = new JButton();
 	private JFrame tela = new JFrame("Tela de inicio");
 	private JFrame geniusFrame;
 	volatile boolean acabou = true; // Essencial, pois, as alterações serão realizadas dinamicamente
     volatile boolean liberado = true; // Essencial, pois, as alterações serão realizadas dinamicamente
-	ArrayList<Competidor> users = new ArrayList<>();
+	ArrayList<Competidor> competidores = new ArrayList<>();
 	
 
 	public static void main(String[] args){
@@ -29,46 +33,35 @@ public class Jogo{
 	
 		jogo.montaJogo();
 		
-		jogo.Run();
+		jogo.Play();
 		
 	}
 
-	public void Run(){
-		this.users.add(new Competidor("Victor", "U01"));
-		this.users.add(new Competidor("Jamilly", "U02"));
-		this.users.add(new Competidor("Pedro", "U03"));
-		int ultimoIndice = users.size();	
+	public void Play(){
+		//placarDoJogo();
+		
+		this.competidores.add(new Competidor("Victor", "U01"));
+		this.competidores.add(new Competidor("Jamilly", "U02"));
+		this.competidores.add(new Competidor("Pedro", "U03"));
+		int ultimoIndice = competidores.size();	
 
 		// Realiza-se as jogadas pelos n Competidors
-		for(int i = 0; i < this.users.size(); i++){
-            this.Jogadas(this.users.get(i));
+		for(int i = 0; i < this.competidores.size(); i++){
+            this.Jogadas(this.competidores.get(i));
 			if (i==ultimoIndice-1){
 				while (retornaEmpate()){
-					JOptionPane.showMessageDialog(geniusFrame,"# Houve empate!");
-					users = retornaEmpatados();
-					desempatarJogo(users);
+					JOptionPane.showMessageDialog(geniusFrame,"+ Houve empate!");
+					competidores = retornaEmpatados();
+					desempatarJogo(competidores);
 				}
 				
-				//JOptionPane.showMessageDialog(geniusFrame,"** Vencedor: " + users.get(vencedorRodada()).getNome() + " | Pontuacao: " + users.get(vencedorRodada()).getPontuacao());
-				JOptionPane.showMessageDialog(geniusFrame,"# Parabens, " + users.get(vencedorRodada()).getNome()  + ", você ganhou! placar: [" + users.get(vencedorRodada()).getPontuacao() + "]");
+				//JOptionPane.showMessageDialog(geniusFrame,"** Vencedor: " + competidores.get(vencedorRodada()).getNome() + " | Pontuacao: " + competidores.get(vencedorRodada()).getPontuacao());
+				JOptionPane.showMessageDialog(geniusFrame,"# Parabens, " + competidores.get(vencedorRodada()).getNome()  + ", você ganhou! placar: [" + competidores.get(vencedorRodada()).getPontuacao() + "]");
 			}
 		}
 
 		// Ranking dos usuários
-		this.exibirRanking(users);
-	}
-
-	public void desempatarJogo(ArrayList<Competidor> empatados){
-		int uIndice=0;
-		for(int i = 0; i < empatados.size(); i++){
-			this.Jogadas(empatados.get(i));
-			if (i==uIndice-1){
-				if (retornaEmpate()){
-					JOptionPane.showMessageDialog(geniusFrame,"Houve empate!");
-					users = retornaEmpatados();
-				}
-			}
-		}
+		this.exibirRanking(competidores);
 	}
 
 	public void placarDoJogo(){
@@ -79,12 +72,26 @@ public class Jogo{
 		tela.add(aviso);
 		tela.setSize(370, 300);
 		tela.setVisible(true);
-
 		aviso.getText();
+		tela.getContentPane();	
+	}
 
+	public void cadastrarCompetidor(Competidor competidor){
+		this.competidores.add(competidor);
+	}
 
-		tela.getContentPane();
+	public Competidor criarNovoCompetidor(){
+		Scanner nomeScan = new Scanner(System.in);
+		String nome = nomeScan.nextLine();
 
+		Scanner idScan = new Scanner(System.in);
+		String id = idScan.nextLine();
+
+		return (new Competidor(nome, id));
+	}
+
+	public void setQtdCompetidores(int qtdCompetidores){
+		this.qtdCompetidores = qtdCompetidores;
 	}
 	
 	public void montaJogo(){	
@@ -97,10 +104,10 @@ public class Jogo{
         geniusFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         
-        but1 = new Botao("/Users/Victor/Desktop/Genius/assets/VermelhoNormal.Gif","/Users/Victor/Desktop/Genius/assets/VermelhoApertado.Gif","/Users/Victor/Desktop/Genius/sound/som1.wav");
-        but2 = new Botao("/Users/Victor/Desktop/Genius/assets/AzulNormal.Gif","/Users/Victor/Desktop/Genius/assets/AzulApertado.Gif","/Users/Victor/Desktop/Genius/sound/som2.wav");
-        but3 = new Botao("/Users/Victor/Desktop/Genius/assets/VerdeNormal.Gif","/Users/Victor/Desktop/Genius/assets/VerdeApertado.Gif","/Users/Victor/Desktop/Genius/sound/som3.wav");
-        but4 = new Botao("/Users/Victor/Desktop/Genius/assets/AmareloNormal.Gif","/Users/Victor/Desktop/Genius/assets/AmareloApertado.Gif","/Users/Victor/Desktop/Genius/sound/som4.wav");
+        but1 = new Botao("/users/Victor/Desktop/Genius/assets/VermelhoNormal.Gif","/users/Victor/Desktop/Genius/assets/VermelhoApertado.Gif","/users/Victor/Desktop/Genius/sound/som1.wav");
+        but2 = new Botao("/users/Victor/Desktop/Genius/assets/AzulNormal.Gif","/users/Victor/Desktop/Genius/assets/AzulApertado.Gif","/users/Victor/Desktop/Genius/sound/som2.wav");
+        but3 = new Botao("/users/Victor/Desktop/Genius/assets/VerdeNormal.Gif","/users/Victor/Desktop/Genius/assets/VerdeApertado.Gif","/users/Victor/Desktop/Genius/sound/som3.wav");
+        but4 = new Botao("/users/Victor/Desktop/Genius/assets/AmareloNormal.Gif","/users/Victor/Desktop/Genius/assets/AmareloApertado.Gif","/users/Victor/Desktop/Genius/sound/som4.wav");
         
         but1.getBotao().addActionListener(new Innerbut1());
         but2.getBotao().addActionListener(new Innerbut2());
@@ -111,7 +118,6 @@ public class Jogo{
         geniusFrame.getContentPane().add(but2.getBotao());
         geniusFrame.getContentPane().add(but3.getBotao());
         geniusFrame.getContentPane().add(but4.getBotao());	
-        
         
         geniusFrame.setVisible(true);
     }
@@ -168,7 +174,7 @@ public class Jogo{
 		}
 	}
 	
-	public void Jogadas(Competidor Competidor){
+	public void Jogadas(Competidor competidor){
 		//*Roda o loop das jogadas*/
 
 		//inicializa as variaveis no inicio do jogo
@@ -186,7 +192,7 @@ public class Jogo{
 				
 				indice1++;//incrementa a posicao para a proxima rodada
 				liberado = false;
-				geniusFrame.setTitle("-> Sua vez, @" + Competidor.getNome() + " | Score:  " + Competidor.getPontuacao());
+				geniusFrame.setTitle("-> Sua vez, @" + competidor.getNome() + " | Score:  " + competidor.getPontuacao());
 			}
 			
 			//vez do JOGADOR
@@ -197,35 +203,49 @@ public class Jogo{
 							liberado = true;
 							//Se acertou, zera a contagem de botoes apertados e libera o computador para a proxima rodada
 						}else{
-							JOptionPane.showMessageDialog(geniusFrame, Competidor.getNome() + ", você errou!");
-							exibirRanking(users);
+							JOptionPane.showMessageDialog(geniusFrame, competidor.getNome() + ", você errou!");
+							exibirRanking(competidores);
 							
 							//JOptionPane.showMessageDialog(geniusFrame,"Game Over!");
 							return;
 							//System.exit(0);
 						}
 				}
-				atualizaPlacar(Competidor);
+				atualizaPlacar(competidor);
 			}
 		}
 	}
 
-	public void exibirRanking(ArrayList<Competidor> Competidors){
+	public void desempatarJogo(ArrayList<Competidor> cEmpatados){
+		int uIndice=0;
+		for(int i = 0; i < cEmpatados.size(); i++){
+			this.Jogadas(cEmpatados.get(i));
+			if (i==uIndice-1){
+				if (retornaEmpate()){
+					JOptionPane.showMessageDialog(geniusFrame,"+ Houve empate!");
+					competidores = retornaEmpatados();
+				}
+			}
+		}
+	}
+
+
+	public void exibirRanking(ArrayList<Competidor> competidores){
 		String pontuacaoFinal = "";
 		System.out.println();
-        for(int i = 0; i < Competidors.size(); i++){
-            pontuacaoFinal += "+ Competidor: " + Competidors.get(i).getNome() + "\n+ Pontuacao: " + Competidors.get(i).getPontuacao() + "\n\n";
+        for(int i = 0; i < competidores.size(); i++){
+            pontuacaoFinal += "+ Competidor: " + competidores.get(i).getNome() + "\n+ Pontuacao: " + competidores.get(i).getPontuacao() + "\n\n";
         }
 		
         JOptionPane.showMessageDialog(geniusFrame, pontuacaoFinal);
     }
 
 	public int vencedorRodada(){
-		int indice=0, maior = users.get(0).getPontuacao();
+		int indice=0, maior = competidores.get(0).getPontuacao();
 		
-		for (int i=1; i<users.size(); i++){
-			if (users.get(i).getPontuacao() > maior){
-				maior = users.get(i).getPontuacao();
+		for (int i=1; i<competidores.size(); i++){
+			if (competidores.get(i).getPontuacao() > maior){
+				maior = competidores.get(i).getPontuacao();
 				indice = i;
 			}
 		}
@@ -234,11 +254,11 @@ public class Jogo{
 	
 
 	public int maiorValorArray(){
-		int maior = users.get(0).getPontuacao();
+		int maior = competidores.get(0).getPontuacao();
 
-		for (int i=1; i<users.size(); i++){
-			if (users.get(i).getPontuacao() > maior)
-				maior = users.get(i).getPontuacao();
+		for (int i=1; i<competidores.size(); i++){
+			if (competidores.get(i).getPontuacao() > maior)
+				maior = competidores.get(i).getPontuacao();
 		}
 		return maior;
 	}
@@ -247,8 +267,8 @@ public class Jogo{
 		int maior = maiorValorArray();
 		int repeticoes = 0;
 
-		for (int i=0; i<users.size(); i++)
-			if (maior==users.get(i).getPontuacao())
+		for (int i=0; i<competidores.size(); i++)
+			if (maior==competidores.get(i).getPontuacao())
 				repeticoes++;
 		
 		if (repeticoes>1)
@@ -258,16 +278,15 @@ public class Jogo{
 	}
 
 	public ArrayList<Competidor> retornaEmpatados(){
-		ArrayList<Competidor> CompetidorsEmpatados = new ArrayList<>();
+		ArrayList<Competidor> competidoresEmpatados = new ArrayList<>();
 		int maior = maiorValorArray();
 
-		for (int i=0; i<users.size(); i++)
-			if (maior==users.get(i).getPontuacao())
-				CompetidorsEmpatados.add(users.get(i));
+		for (int i=0; i<competidores.size(); i++)
+			if (maior==competidores.get(i).getPontuacao())
+				competidoresEmpatados.add(competidores.get(i));
 		
-		return CompetidorsEmpatados;
+		return competidoresEmpatados;
 	}
-
 
 	public void setVelocidadeDoJogo(int velocidade){
 		this.velocidade = velocidade;
