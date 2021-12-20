@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 
@@ -12,40 +13,78 @@ public class Jogo{
 	private Botao but1,but2,but3,but4;
 	private int[] lista1 = new int[100];//vetor de escolhas do computador
 	private int[] lista2= new int[100];//vetor de jogadas humanas 
-	private int indice1,indice2;
+	private int indice1, indice2;
 	private int contagem; //quantidade de botoes apertados em uma rodada
     private int velocidade = 1;
 	private JButton butiniciar = new JButton();
+	private JFrame tela = new JFrame("Tela de inicio");
 	private JFrame geniusFrame;
 	volatile boolean acabou = true; // Essencial, pois, as alterações serão realizadas dinamicamente
     volatile boolean liberado = true; // Essencial, pois, as alterações serão realizadas dinamicamente
+	ArrayList<Competidor> users = new ArrayList<>();
 	
-	public static void main(String[] args){
-		Jogo game = new Jogo();
-		// Interface visual do Jogo
-		game.montaJogo();
 
-		// Loop do Jogo (parte lógica) 
-		game.Run();
+	public static void main(String[] args){
+		Jogo jogo = new Jogo ();
+	
+		jogo.montaJogo();
 		
-		System.exit(0);
+		jogo.Run();
 		
 	}
 
 	public void Run(){
-		ArrayList<Usuario> users = new ArrayList<>();
-		
-		users.add(new Usuario("Jonas", "U01"));
-		users.add(new Usuario("Jamilly", "U02"));
-		users.add(new Usuario("Janilda", "U03"));
+		this.users.add(new Competidor("Victor", "U01"));
+		this.users.add(new Competidor("Jamilly", "U02"));
+		this.users.add(new Competidor("Pedro", "U03"));
+		int ultimoIndice = users.size();	
 
-		// Realiza-se as jogadas pelos n Usuarios
-		for(int i = 0; i < users.size(); i++){
-            this.Jogadas(users.get(i));
-        }
+		// Realiza-se as jogadas pelos n Competidors
+		for(int i = 0; i < this.users.size(); i++){
+            this.Jogadas(this.users.get(i));
+			if (i==ultimoIndice-1){
+				while (retornaEmpate()){
+					JOptionPane.showMessageDialog(geniusFrame,"# Houve empate!");
+					users = retornaEmpatados();
+					desempatarJogo(users);
+				}
+				
+				//JOptionPane.showMessageDialog(geniusFrame,"** Vencedor: " + users.get(vencedorRodada()).getNome() + " | Pontuacao: " + users.get(vencedorRodada()).getPontuacao());
+				JOptionPane.showMessageDialog(geniusFrame,"# Parabens, " + users.get(vencedorRodada()).getNome()  + ", você ganhou! placar: [" + users.get(vencedorRodada()).getPontuacao() + "]");
+			}
+		}
 
 		// Ranking dos usuários
 		this.exibirRanking(users);
+	}
+
+	public void desempatarJogo(ArrayList<Competidor> empatados){
+		int uIndice=0;
+		for(int i = 0; i < empatados.size(); i++){
+			this.Jogadas(empatados.get(i));
+			if (i==uIndice-1){
+				if (retornaEmpate()){
+					JOptionPane.showMessageDialog(geniusFrame,"Houve empate!");
+					users = retornaEmpatados();
+				}
+			}
+		}
+	}
+
+	public void placarDoJogo(){
+		JLabel aviso = new JLabel("Alerta");
+
+		aviso.setSize(100, 100);
+		tela.setLayout(null);
+		tela.add(aviso);
+		tela.setSize(370, 300);
+		tela.setVisible(true);
+
+		aviso.getText();
+
+
+		tela.getContentPane();
+
 	}
 	
 	public void montaJogo(){	
@@ -75,7 +114,6 @@ public class Jogo{
         
         
         geniusFrame.setVisible(true);
-        
     }
 	
 	public void escolhaPC(){
@@ -130,9 +168,9 @@ public class Jogo{
 		}
 	}
 	
-	public void Jogadas(Usuario usuario){
+	public void Jogadas(Competidor Competidor){
 		//*Roda o loop das jogadas*/
-		
+
 		//inicializa as variaveis no inicio do jogo
 		indice1=0;
 		indice2=0;
@@ -148,7 +186,7 @@ public class Jogo{
 				
 				indice1++;//incrementa a posicao para a proxima rodada
 				liberado = false;
-				geniusFrame.setTitle("-> Sua vez, " + usuario.getNome() + " | Pontuacao:  " + usuario.getPontuacao());
+				geniusFrame.setTitle("-> Sua vez, @" + Competidor.getNome() + " | Score:  " + Competidor.getPontuacao());
 			}
 			
 			//vez do JOGADOR
@@ -159,24 +197,77 @@ public class Jogo{
 							liberado = true;
 							//Se acertou, zera a contagem de botoes apertados e libera o computador para a proxima rodada
 						}else{
-							JOptionPane.showMessageDialog(geniusFrame,"Game Over!");
+							JOptionPane.showMessageDialog(geniusFrame, Competidor.getNome() + ", você errou!");
+							exibirRanking(users);
+							
+							//JOptionPane.showMessageDialog(geniusFrame,"Game Over!");
 							return;
 							//System.exit(0);
 						}
 				}
-				atualizaPlacar(usuario);
+				atualizaPlacar(Competidor);
 			}
 		}
 	}
 
-	public void exibirRanking(ArrayList<Usuario> usuarios){
-		String pontuacaoFinal = " ";
-        for(int i = 0; i < usuarios.size(); i++){
-            pontuacaoFinal += usuarios.get(i).getNome() + "\n * Pontuacao: " + usuarios.get(i).getPontuacao() + "\n\n";
+	public void exibirRanking(ArrayList<Competidor> Competidors){
+		String pontuacaoFinal = "";
+		System.out.println();
+        for(int i = 0; i < Competidors.size(); i++){
+            pontuacaoFinal += "+ Competidor: " + Competidors.get(i).getNome() + "\n+ Pontuacao: " + Competidors.get(i).getPontuacao() + "\n\n";
         }
-
+		
         JOptionPane.showMessageDialog(geniusFrame, pontuacaoFinal);
     }
+
+	public int vencedorRodada(){
+		int indice=0, maior = users.get(0).getPontuacao();
+		
+		for (int i=1; i<users.size(); i++){
+			if (users.get(i).getPontuacao() > maior){
+				maior = users.get(i).getPontuacao();
+				indice = i;
+			}
+		}
+		return indice;
+	}
+	
+
+	public int maiorValorArray(){
+		int maior = users.get(0).getPontuacao();
+
+		for (int i=1; i<users.size(); i++){
+			if (users.get(i).getPontuacao() > maior)
+				maior = users.get(i).getPontuacao();
+		}
+		return maior;
+	}
+	
+	public boolean retornaEmpate(){
+		int maior = maiorValorArray();
+		int repeticoes = 0;
+
+		for (int i=0; i<users.size(); i++)
+			if (maior==users.get(i).getPontuacao())
+				repeticoes++;
+		
+		if (repeticoes>1)
+			return true;
+
+		return false;
+	}
+
+	public ArrayList<Competidor> retornaEmpatados(){
+		ArrayList<Competidor> CompetidorsEmpatados = new ArrayList<>();
+		int maior = maiorValorArray();
+
+		for (int i=0; i<users.size(); i++)
+			if (maior==users.get(i).getPontuacao())
+				CompetidorsEmpatados.add(users.get(i));
+		
+		return CompetidorsEmpatados;
+	}
+
 
 	public void setVelocidadeDoJogo(int velocidade){
 		this.velocidade = velocidade;
@@ -243,8 +334,8 @@ public class Jogo{
         }                           
     }
 
-	public void atualizaPlacar(Usuario usuarioAtual){
+	public void atualizaPlacar(Competidor CompetidorAtual){
 		this.indice2 = 0; //indice de jogadas humanas retorna a 0 para a proxima rodada
-		usuarioAtual.setPontuacao(usuarioAtual.getPontuacao() + 1);
+		CompetidorAtual.setPontuacao(CompetidorAtual.getPontuacao() + 1);			
 	}
 }
