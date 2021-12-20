@@ -23,8 +23,8 @@ O projeto ainda está em desenvolvimento e as próximas atualizações serão vo
             <li> II.  Total de pontos. 🟢
             <li> III. Nome. 🟢
             <li> IV.  Apelido. 🟢
-            <li> V.   Data do Campeonato. 🔴
-            <li> VI.  Titulo do Campeonato. 🔴
+            <li> V.   Data do Campeonato. 🟢
+            <li> VI.  Titulo do Campeonato. 🟢
             <li> VII. Jogada mais rapida de cada jogador. 🔴
         </ul>
 
