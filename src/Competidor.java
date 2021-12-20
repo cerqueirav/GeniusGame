@@ -5,13 +5,12 @@ import java.util.Scanner;
 public class Competidor implements Comparable<Competidor>{
     private String nome;
     private String apelido;
-    private String id;
     private int recordRodada;
     private int pontuacao;
 
-    public Competidor(String nome, String id){
+    public Competidor(String nome, String apelido){
         this.setNome(nome);
-        this.setId(id);
+        this.setApelido(apelido);
         this.pontuacao = 0;
         this.recordRodada = 0;
     }
@@ -24,12 +23,12 @@ public class Competidor implements Comparable<Competidor>{
         return this.recordRodada;
     }
 
-    public void setId(String id){
-        this.id = id;
+    public void setApelido(String apelido){
+        this.apelido = apelido;
     }
 
-    public String getId(){
-        return this.id;
+    public String getApelido(){
+        return this.apelido;
     }
 
     public void setNome(String nome){

@@ -16,7 +16,7 @@ O projeto ainda está em desenvolvimento e as próximas atualizações serão vo
         <li> II. O sistema deve permitir que mais de um jogador disputem um campeonato. 🟢
         <li> III. A cada rodada devem ser computados e exibidos os pontos(totais e da rodada) de cada Jogador.🟢
         <li> IV. Um jogador deve jogar até errar sua seqüência e depois passar a vez.  🟢
-        <li> V. Em caso de empate, uma rodada extra deve ser sugerida pelo sistema para os jogadores empatados e isso deve se repetir até que um jogador vença.  🟢
+        <li> V. Em caso de empate, uma rodada extra deve ser sugerida pelo sistema para os jogadores empatados e isso deve se repetir até que um jogador vença.  🔴
         <li> VI. No fim do campeonato deve ser possível imprimir um relatório onde sejam contemplados os campos: 
         <ul>
             <li> I.   Tempo total de jogadas de cada jogador. 🔴

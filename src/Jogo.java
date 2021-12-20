@@ -7,7 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
+import javax.swing.JTable;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -17,35 +17,41 @@ public class Jogo{
 	private int[] lista2= new int[100];//vetor de jogadas humanas 
 	private int indice1, indice2;
 	private int contagem; //quantidade de botoes apertados em uma rodada
-    private int velocidade = 1;
-	private int qtdCompetidores;
-	private String modoJogo;
+    private int velocidade = 0;
+	private int qtdComp;
+	private String dificuldade;
 	private JButton butiniciar = new JButton();
+	private JTable tabela;
 	private JFrame tela = new JFrame("Tela de inicio");
 	private JFrame geniusFrame;
 	volatile boolean acabou = true; // Essencial, pois, as alterações serão realizadas dinamicamente
     volatile boolean liberado = true; // Essencial, pois, as alterações serão realizadas dinamicamente
 	ArrayList<Competidor> competidores = new ArrayList<>();
-	
 
 	public static void main(String[] args){
 		Jogo jogo = new Jogo ();
-	
+
+		// Define o numero de Jogadores
+		jogo.setQtdCompetidores();
+
+		// Define o nível do Jogo
+		jogo.setDificuldade();
+
+		// Cadastra os competidores
+		for (int i=0; i<jogo.getQtdCompetidores(); i++)
+			jogo.cadastrarCompetidor(jogo.criarNovoCompetidor());
+		
+		// Desenha a tela do jogo
 		jogo.montaJogo();
-		
+			
+		// Executa a parte lógica do jogo 
 		jogo.Play();
-		
 	}
 
 	public void Play(){
-		//placarDoJogo();
-		
-		this.competidores.add(new Competidor("Victor", "U01"));
-		this.competidores.add(new Competidor("Jamilly", "U02"));
-		this.competidores.add(new Competidor("Pedro", "U03"));
 		int ultimoIndice = competidores.size();	
 
-		// Realiza-se as jogadas pelos n Competidors
+		// Aonde ocorre as jogadas dos competidores
 		for(int i = 0; i < this.competidores.size(); i++){
             this.Jogadas(this.competidores.get(i));
 			if (i==ultimoIndice-1){
@@ -57,6 +63,7 @@ public class Jogo{
 				
 				//JOptionPane.showMessageDialog(geniusFrame,"** Vencedor: " + competidores.get(vencedorRodada()).getNome() + " | Pontuacao: " + competidores.get(vencedorRodada()).getPontuacao());
 				JOptionPane.showMessageDialog(geniusFrame,"# Parabens, " + competidores.get(vencedorRodada()).getNome()  + ", você ganhou! placar: [" + competidores.get(vencedorRodada()).getPontuacao() + "]");
+				
 			}
 		}
 
@@ -81,17 +88,52 @@ public class Jogo{
 	}
 
 	public Competidor criarNovoCompetidor(){
-		Scanner nomeScan = new Scanner(System.in);
-		String nome = nomeScan.nextLine();
+		String nome = (String) JOptionPane.showInputDialog(geniusFrame, "Nome: ", "<Informe aqui o nome>");
+    	
+		String apelido = (String) JOptionPane.showInputDialog(geniusFrame, "Apelido: ", "<Informe o apelido>");
 
-		Scanner idScan = new Scanner(System.in);
-		String id = idScan.nextLine();
-
-		return (new Competidor(nome, id));
+		return (new Competidor(nome, apelido));
 	}
 
-	public void setQtdCompetidores(int qtdCompetidores){
-		this.qtdCompetidores = qtdCompetidores;
+	public void setQtdCompetidores(){
+		String qtd =  JOptionPane.showInputDialog(geniusFrame, "Quantidade de Jogadores: ");
+		this.qtdComp = Integer.parseInt(qtd);
+	}
+
+	public int getQtdCompetidores(){
+		return this.qtdComp;
+	}
+
+	public void setDificuldade(){
+		String[] dificuldades = {"Facil", "Medio", "Dificil", "Muito Dificil"};
+    	
+    	String definirDificuldade = (String) JOptionPane.showInputDialog(geniusFrame, "Dificuldade: ", " Dificuldade do Jogo", JOptionPane.QUESTION_MESSAGE, null, dificuldades, dificuldades[2]);
+    	
+		this.dificuldade = definirDificuldade;
+	}
+
+	public String getDificuldade(){
+		return this.dificuldade;
+	}
+
+	public int converterVelocidade(int velocidade){
+		switch(this.getDificuldade()){
+			case "Facil":{
+				return (velocidade);
+			}
+			case "Medio":{
+				return (velocidade/2);
+			}
+			case "Dificil":{
+				return (velocidade/3);
+			}
+			case "Muito Dificil":{
+				return (velocidade/4);
+			}
+			default:{
+				return (velocidade);
+			}
+		}
 	}
 	
 	public void montaJogo(){	
@@ -128,14 +170,20 @@ public class Jogo{
 		 */	 
 			
 		int numeroBotao = (int)(Math.random() * 4); 
-			lista1[indice1] = numeroBotao;
+		lista1[indice1] = numeroBotao;
+		
+		int v1 = 900; // Ambas variaveis sao referentes ao tempo de espera dos botes 
+		int v2 = 500;
+
+		v1 = converterVelocidade(v1);
+		v2 = converterVelocidade(v2);
 			
 		for (int z = 0;z<=indice1;z++){//pisca os botoes escolhidos pelo computador ate o momento
 			if (lista1[z]==0){ 
 				try{
-					Thread.sleep(900); 
+					Thread.sleep(v1); 
 					but1.apertaBotao();
-					Thread.sleep(500); 
+					Thread.sleep(v2); 
 					but1.desapertaBotao();
 						
 				}catch(Exception e){
@@ -143,9 +191,9 @@ public class Jogo{
 			}
 			if (lista1[z]==1){ 
 				try{
-					Thread.sleep(900);
+					Thread.sleep(v1);
 					but2.apertaBotao();
-					Thread.sleep(500);
+					Thread.sleep(v2);
 					but2.desapertaBotao();
 						
 				}catch(Exception e){
@@ -153,9 +201,9 @@ public class Jogo{
 			}
 			if (lista1[z]==2){ 
 				try{
-					Thread.sleep(900);
+					Thread.sleep(v1);
 					but3.apertaBotao();
-					Thread.sleep(500);
+					Thread.sleep(v2);
 					but3.desapertaBotao();
 						
 				}catch(Exception e){
@@ -163,9 +211,9 @@ public class Jogo{
 			}
 			if (lista1[z]==3){ 
 				try{
-					Thread.sleep(900);
+					Thread.sleep(v1);
 					but4.apertaBotao();
-					Thread.sleep(500);
+					Thread.sleep(v2);
 					but4.desapertaBotao();
 						
 				}catch(Exception e){
@@ -222,7 +270,7 @@ public class Jogo{
 			this.Jogadas(cEmpatados.get(i));
 			if (i==uIndice-1){
 				if (retornaEmpate()){
-					JOptionPane.showMessageDialog(geniusFrame,"+ Houve empate!");
+					JOptionPane.showMessageDialog(geniusFrame,"+ Houve empate!");					
 					competidores = retornaEmpatados();
 				}
 			}
@@ -234,7 +282,9 @@ public class Jogo{
 		String pontuacaoFinal = "";
 		System.out.println();
         for(int i = 0; i < competidores.size(); i++){
-            pontuacaoFinal += "+ Competidor: " + competidores.get(i).getNome() + "\n+ Pontuacao: " + competidores.get(i).getPontuacao() + "\n\n";
+            pontuacaoFinal += "+ Competidor: " + competidores.get(i).getNome() 
+						  + "\n+ Apelido: " + competidores.get(i).getApelido() 
+						  + "\n+ Pontuacao: " + competidores.get(i).getPontuacao() + "\n\n";
         }
 		
         JOptionPane.showMessageDialog(geniusFrame, pontuacaoFinal);
@@ -295,27 +345,6 @@ public class Jogo{
 	public int getVelocidadeDoJogo(){
 		return this.velocidade;
 	}
-
-	public int modificaVelocidadeDoJogo(){
-		int velocidade = getVelocidadeDoJogo();
-		switch(velocidade){
-			case 2:{
-				return 600;
-			}
-			case 3:{
-				return 300;
-			}
-			case 4:{
-				return 150;
-			}
-			case 5:{
-				return 50;
-			}
-			default:{
-				return 900;
-			}
-		}
-	}
 	
 	public class Innerbut1 implements ActionListener{
 		public void actionPerformed(ActionEvent e) {
@@ -353,8 +382,8 @@ public class Jogo{
         }                           
     }
 
-	public void atualizaPlacar(Competidor CompetidorAtual){
+	public void atualizaPlacar(Competidor competidorAtual){
 		this.indice2 = 0; //indice de jogadas humanas retorna a 0 para a proxima rodada
-		CompetidorAtual.setPontuacao(CompetidorAtual.getPontuacao() + 1);			
+		competidorAtual.setPontuacao(competidorAtual.getPontuacao() + 1);			
 	}
 }
